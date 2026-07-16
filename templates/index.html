@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>CancerAI | Breast Cancer Prediction</title>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+
+
+</head>
+
+
+<body>
+
+
+
+<div class="background">
+
+<div class="blob blob1"></div>
+
+<div class="blob blob2"></div>
+
+<div class="blob blob3"></div>
+
+<div class="blob blob4"></div>
+
+</div>
+
+
+
+
+
+<nav class="navbar">
+
+
+<div class="logo">
+
+<i class="fa-solid fa-dna"></i>
+
+CancerAI
+
+</div>
+
+
+
+<ul class="nav-links">
+
+<li>
+<a href="#home">Home</a>
+</li>
+
+
+<li>
+<a href="#predict">Predict</a>
+</li>
+
+
+<li>
+<a href="#about">About</a>
+</li>
+
+
+</ul>
+
+
+</nav>
+
+
+
+
+
+
+
+<section class="hero" id="home">
+
+
+<div class="hero-left">
+
+
+<span class="badge">
+
+<i class="fa-solid fa-brain"></i>
+
+AI Powered Diagnosis
+
+</span>
+
+
+
+<h1>
+
+Detect Breast Tumor
+
+<span>
+Using Machine Learning
+</span>
+
+</h1>
+
+
+
+
+<p>
+
+A modern AI-powered healthcare application that predicts
+whether a breast tumor is Benign or Malignant using an
+optimized Support Vector Machine (SVM) model.
+
+</p>
+
+
+
+
+
+<div class="hero-buttons">
+
+
+<a href="#predict" class="btn-primary">
+
+Predict Now
+
+<i class="fa-solid fa-arrow-right"></i>
+
+</a>
+
+
+
+<a href="#about" class="btn-secondary">
+
+Learn More
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="hero-right">
+
+
+<div class="hero-card">
+
+
+<div class="pulse-ring"></div>
+
+
+<i class="fa-solid fa-microscope"></i>
+
+
+<h2>
+SVM Classifier
+</h2>
+
+
+
+<h1>
+98%
+</h1>
+
+
+
+<p>
+Model Accuracy
+</p>
+
+
+</div>
+
+
+</div>
+
+
+
+</section>
+
+<!-- ========================================= -->
+<!-- Prediction Section -->
+<!-- ========================================= -->
+
+
+<section class="prediction-section" id="predict">
+
+
+<div class="section-title">
+
+
+<h2>
+Breast Cancer Prediction
+</h2>
+
+
+<p>
+Enter all 30 tumor measurements below. The trained SVM model
+will analyze the values and classify the tumor.
+</p>
+
+
+</div>
+
+
+
+
+
+{% if error %}
+
+<div class="error-card">
+
+<i class="fa-solid fa-circle-exclamation"></i>
+
+{{error}}
+
+</div>
+
+{% endif %}
+
+
+
+
+
+{% if prediction %}
+
+
+<div class="result-card">
+
+
+<div class="result-icon">
+
+{% if prediction=="Benign" %}
+
+🟢
+
+{% else %}
+
+🔴
+
+{% endif %}
+
+</div>
+
+
+
+<h2>
+Prediction Result
+</h2>
+
+
+
+<h1 class="{% if prediction=='Benign' %}safe{% else %}danger{% endif %}">
+
+{{prediction}}
+
+</h1>
+
+
+
+<p>
+{{message}}
+</p>
+
+
+
+</div>
+
+
+{% endif %}
+
+
+
+
+
+
+
+<form action="/predict"
+method="POST"
+id="predictionForm">
+
+
+
+
+
+
+
+<!-- ========================= -->
+<!-- Mean Features -->
+<!-- ========================= -->
+
+
+<div class="feature-card">
+
+
+<div class="card-title">
+
+<i class="fa-solid fa-chart-line"></i>
+
+Mean Features
+
+</div>
+
+
+
+
+<div class="input-grid">
+
+
+
+{% set features = {
+
+
+"mean_radius":"Example: 6.0-30.0",
+
+"mean_texture":"Example: 9.0-40.0",
+
+"mean_perimeter":"Example: 40.0-190.0",
+
+"mean_area":"Example: 140.0-2500.0",
+
+"mean_smoothness":"Example: 0.05-0.17",
+
+"mean_compactness":"Example: 0.02-0.35",
+
+"mean_concavity":"Example: 0.0-0.45",
+
+"mean_concave_points":"Example: 0.0-0.20",
+
+"mean_symmetry":"Example: 0.10-0.30",
+
+"mean_fractal_dimension":"Example: 0.04-0.10"
+
+
+} %}
+
+
+
+{% for feature in features %}
+
+
+
+<div class="input-box">
+
+
+<label>
+
+{{feature.replace("_"," ").title()}}
+
+</label>
+
+
+<input
+
+type="number"
+
+step="any"
+
+min="0"
+
+name="{{feature}}"
+
+placeholder="{{features[feature]}}"
+
+required>
+
+
+</div>
+
+
+
+{% endfor %}
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- ========================= -->
+<!-- Error Features -->
+<!-- ========================= -->
+
+
+<div class="feature-card">
+
+
+<div class="card-title">
+
+<i class="fa-solid fa-wave-square"></i>
+
+Standard Error Features
+
+</div>
+
+
+
+
+<div class="input-grid">
+
+
+
+{% set features = {
+
+
+"radius_error":"Example: 0.1-3.0",
+
+"texture_error":"Example: 0.3-5.0",
+
+"perimeter_error":"Example: 0.7-22.0",
+
+"area_error":"Example: 6.0-550.0",
+
+"smoothness_error":"Example: 0.001-0.04",
+
+"compactness_error":"Example: 0.002-0.14",
+
+"concavity_error":"Example: 0.0-0.40",
+
+"concave_points_error":"Example: 0.0-0.05",
+
+"symmetry_error":"Example: 0.0-0.08",
+
+"fractal_dimension_error":"Example: 0.001-0.03"
+
+
+} %}
+
+
+
+
+
+{% for feature in features %}
+
+
+
+<div class="input-box">
+
+
+<label>
+
+{{feature.replace("_"," ").title()}}
+
+</label>
+
+
+
+<input
+
+type="number"
+
+step="any"
+
+min="0"
+
+name="{{feature}}"
+
+placeholder="{{features[feature]}}"
+
+required>
+
+
+</div>
+
+
+
+{% endfor %}
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- ========================= -->
+<!-- Worst Features -->
+<!-- ========================= -->
+
+
+<div class="feature-card">
+
+
+<div class="card-title">
+
+<i class="fa-solid fa-triangle-exclamation"></i>
+
+Worst Features
+
+</div>
+
+
+
+
+<div class="input-grid">
+
+
+
+{% set features = {
+
+
+"worst_radius":"Example: 7.0-40.0",
+
+"worst_texture":"Example: 12.0-50.0",
+
+"worst_perimeter":"Example: 50.0-250.0",
+
+"worst_area":"Example: 180.0-4500.0",
+
+"worst_smoothness":"Example: 0.07-0.25",
+
+"worst_compactness":"Example: 0.03-1.0",
+
+"worst_concavity":"Example: 0.0-1.3",
+
+"worst_concave_points":"Example: 0.0-0.30",
+
+"worst_symmetry":"Example: 0.15-0.70",
+
+"worst_fractal_dimension":"Example: 0.05-0.20"
+
+
+} %}
+
+
+
+
+
+{% for feature in features %}
+
+
+
+<div class="input-box">
+
+
+<label>
+
+{{feature.replace("_"," ").title()}}
+
+</label>
+
+
+
+<input
+
+type="number"
+
+step="any"
+
+min="0"
+
+name="{{feature}}"
+
+placeholder="{{features[feature]}}"
+
+required>
+
+
+</div>
+
+
+
+{% endfor %}
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<button
+
+type="submit"
+
+class="predict-btn">
+
+
+<i class="fa-solid fa-brain"></i>
+
+Analyze Tumor
+
+
+</button>
+
+
+
+</form>
+
+
+
+</section>
+
+<!-- ========================================= -->
+<!-- About Section -->
+<!-- ========================================= -->
+
+
+<section class="about-section" id="about">
+
+
+
+<div class="section-title">
+
+
+<h2>
+About The Model
+</h2>
+
+
+
+<p>
+
+A machine learning system trained to classify breast tumors
+using medical measurements.
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+<div class="about-grid">
+
+
+
+
+
+<div class="about-card">
+
+
+<i class="fa-solid fa-database"></i>
+
+
+<h3>
+Dataset
+</h3>
+
+
+
+<p>
+
+Wisconsin Breast Cancer Dataset
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="about-card">
+
+
+<i class="fa-solid fa-robot"></i>
+
+
+<h3>
+Algorithm
+</h3>
+
+
+
+<p>
+
+Support Vector Machine (SVM)
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="about-card">
+
+
+<i class="fa-solid fa-bullseye"></i>
+
+
+<h3>
+Accuracy
+</h3>
+
+
+
+<p>
+
+98% Prediction Accuracy
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- ========================================= -->
+<!-- Footer -->
+<!-- ========================================= -->
+
+
+
+<footer>
+
+
+
+<div class="footer-content">
+
+
+
+<h2>
+
+
+<i class="fa-solid fa-dna"></i>
+
+
+CancerAI
+
+
+</h2>
+
+
+
+
+
+<p>
+
+Built using Machine Learning + Flask
+
+</p>
+
+
+
+
+
+<p class="copyright">
+
+© 2026 CancerAI. All rights reserved.
+
+</p>
+
+
+
+</div>
+
+
+
+</footer>
+
+
+
+
+
+
+
+
+
+<!-- ========================================= -->
+<!-- JavaScript -->
+<!-- ========================================= -->
+
+
+
+<script>
+
+
+const form = document.getElementById("predictionForm");
+
+
+
+form.addEventListener(
+"submit",
+function(){
+
+
+
+const button =
+document.querySelector(".predict-btn");
+
+
+
+button.innerHTML =
+
+`
+
+Analyzing
+
+<i class="fa-solid fa-spinner fa-spin"></i>
+
+`;
+
+
+
+button.disabled = true;
+
+
+
+}
+
+);
+
+
+
+</script>
+
+
+
+
+
+
+
+</body>
+
+
+</html>
