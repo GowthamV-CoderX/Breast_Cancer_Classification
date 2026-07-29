@@ -97,8 +97,6 @@ def predict():
                     "index.html",
                     error="Please fill all fields"
                 )
-
-
             values.append(
                 float(value)
             )
